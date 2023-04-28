@@ -10,12 +10,7 @@ export class App extends Component {
     contacts: [...StartState],
     filter: '',
   };
-  // addContact = data => {
-  //   this.setState(prevState => ({
-  //     contacts: [...prevState.contacts, data],
-  //   }));
-  // };
-
+  // ====================MAIN METHODS==============================
   addContact = data => {
     this.isNamesDublicated(data.name)
       ? alert(`${data.name} is already in contacts.`)
@@ -34,6 +29,7 @@ export class App extends Component {
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
+  // ==================ADDITIONAL METHODS==========================
   onFilterInputChange = name => {
     this.setState({ filter: name });
   };
@@ -41,6 +37,19 @@ export class App extends Component {
     this.state.contacts.some(
       el => el.name.toLowerCase() === name.toLowerCase()
     );
+  // =================LIFE CYCLE METHODS===========================
+  componentDidMount() {
+    const localContacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(localContacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+  componentDidUpdate(prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const filteredContacts = this.filterContacts();
