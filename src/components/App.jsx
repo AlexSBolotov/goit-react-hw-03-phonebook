@@ -7,9 +7,23 @@ import { Component } from 'react';
 
 export class App extends Component {
   state = {
-    contacts: [...StartState],
+    contacts: [],
     filter: '',
   };
+  // =================LIFE CYCLE METHODS===========================
+  componentDidMount() {
+    const localContacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(localContacts) || StartState;
+    this.setState({ contacts: parsedContacts });
+    // if (parsedContacts) {
+    //   this.setState({ contacts: parsedContacts });
+    // }
+  }
+  componentDidUpdate(prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
   // ====================MAIN METHODS==============================
   addContact = data => {
     this.isNamesDublicated(data.name)
@@ -37,19 +51,6 @@ export class App extends Component {
     this.state.contacts.some(
       el => el.name.toLowerCase() === name.toLowerCase()
     );
-  // =================LIFE CYCLE METHODS===========================
-  componentDidMount() {
-    const localContacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(localContacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-  componentDidUpdate(prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
 
   render() {
     const filteredContacts = this.filterContacts();
